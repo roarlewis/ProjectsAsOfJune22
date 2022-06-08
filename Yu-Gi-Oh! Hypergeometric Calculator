@@ -1,0 +1,303 @@
+def turntopercent(number):
+    newnum = number * 100
+    return newnum
+def turnspecificnumbertofraction(number):
+    origlist = []
+    for i in range(25,1000,25):
+        origlist.append(i)
+    numindex = origlist.index(number)
+    newlist = [(1,40),(1,20),(3,40),(1,10),(1,8),(3,20),(7,40),(1,5),(9,40),(1,4),(11,40),(3,10),(13,40),(7,20),(3,8),(2,5),(17,40),(9,20),(19,40),(1,2),(21,40),(11,20),(23,40),(3,5),(5,8),(13,20),(27,40),(7,10),(29,40),(3,4),(31,40),(4,5),(33,40),(17,20),(7,8),(9,10),(37,40),(19,20),(39,40)]
+    newnumbers = newlist[numindex]
+    return newnumbers
+def turntofraction(number):
+    templist = []
+    indexlist = []
+    for i in range(25,1000,25):
+        templist.append(i)
+    for i in templist:
+        if number - i < 12.5: 
+            indexlist.append(i)
+    fractiontuple = turnspecificnumbertofraction(indexlist[0])
+    return fractiontuple
+def checkifnumber(number):
+    if number.strip().isdigit():
+        return False
+    else:
+        return True
+def factorial(number):
+    for i in range(1,number):
+        number *= i
+    return number
+def binomialcoefficient(num1,num2):
+    toppart = factorial(num1)
+    bottompart = (factorial(num1-num2)) * (factorial(num2))
+    return(toppart/bottompart)
+def oddsexactlyonegoingfirst(popsize,numofcard):
+    toppart1 = binomialcoefficient(numofcard,1)
+    toppart2 = binomialcoefficient(popsize-numofcard,4)
+    bottompart = binomialcoefficient(popsize,5)
+    oddsexactlyone = (toppart1 * toppart2) / bottompart
+    return oddsexactlyone
+def oddsexactlyonegoingsecond(popsize,numofcard):
+    toppart1 = binomialcoefficient(numofcard,1)
+    toppart2 = binomialcoefficient(popsize-numofcard,5)
+    bottompart = binomialcoefficient(popsize,6)
+    oddsexactlyone = (toppart1 * toppart2) / bottompart
+    return oddsexactlyone
+def oddsatleastonegoingfirst(popsize,numofcard):
+    oddsoutofone = 1 - (((popsize - numofcard)/popsize) * (popsize - numofcard - 1)/(popsize - 1) * (popsize - numofcard - 2)/(popsize - 2) * (popsize - numofcard - 3)/(popsize - 3) * (popsize - numofcard - 4)/(popsize - 4))
+    return oddsoutofone
+def oddsofgoingsecond(popsize,numofcard):
+    oddsgoingsecond = 1 - (((popsize - numofcard)/popsize) * (popsize - numofcard - 1)/(popsize - 1) * (popsize - numofcard - 2)/(popsize - 2) * (popsize - numofcard - 3)/(popsize - 3) * (popsize - numofcard - 4)/(popsize - 4) * (popsize - numofcard - 5)/(popsize - 5))
+    return oddsgoingsecond
+def oddsoneandnottheothergoingfirst(popsize,numofcard,numofcard2):
+    probofcarda = oddsatleastonegoingfirst(popsize, numofcard)
+    probnotcardb = (((popsize - numofcard2)/popsize) * (popsize - numofcard2 - 1)/(popsize - 1) * (popsize - numofcard2 - 2)/(popsize - 2) * (popsize - numofcard2 - 3)/(popsize - 3) * (popsize - numofcard2 - 4)/(popsize - 4))
+    probofcardb = oddsatleastonegoingfirst(popsize, numofcard2)
+    probnotcarda = (((popsize - numofcard)/popsize) * (popsize - numofcard - 1)/(popsize - 1) * (popsize - numofcard - 2)/(popsize - 2) * (popsize - numofcard - 3)/(popsize - 3) * (popsize - numofcard - 4)/(popsize - 4))
+    probofanotb = probofcarda * probnotcardb
+    probofbnota = probofcardb * probnotcarda
+    return (probofanotb,probofbnota)
+def oddsofseeingneither(popsize,numofcard,numofcard2):
+    oddsofneither = 1 - oddsatleastonegoingfirst(popsize,numofcard + numofcard2)
+    return oddsofneither
+def oddsofseeingatleastoneofbothgoingfirst(popsize,numofcard,numofcard2):
+    probtuple = oddsoneandnottheothergoingfirst(popsize,numofcard,numofcard2)
+    probofanotb = probtuple[0]
+    probofbnota = probtuple[1]
+    oddsofneither = oddsofseeingneither(popsize,numofcard,numofcard2)
+    oddsofbothgoingfirst = 1 - (probofanotb + probofbnota + oddsofneither)
+    return oddsofbothgoingfirst
+def oddsofseeingneithergoingsecond(popsize,numofcard,numofcard2):
+    oddsofneither = 1 - oddsofgoingsecond(popsize,numofcard + numofcard2)
+    return oddsofneither
+def oddsoneandnottheothergoingsecond(popsize,numofcard,numofcard2):
+    probofcarda = oddsofgoingsecond(popsize, numofcard)
+    probnotcardb = (((popsize - numofcard2)/popsize) * (popsize - numofcard2 - 1)/(popsize - 1) * (popsize - numofcard2 - 2)/(popsize - 2) * (popsize - numofcard2 - 3)/(popsize - 3) * (popsize - numofcard2 - 4)/(popsize - 4) * (popsize - numofcard - 5)/(popsize - 5))
+    probofcardb = oddsofgoingsecond(popsize, numofcard2)
+    probnotcarda = (((popsize - numofcard)/popsize) * (popsize - numofcard - 1)/(popsize - 1) * (popsize - numofcard - 2)/(popsize - 2) * (popsize - numofcard - 3)/(popsize - 3) * (popsize - numofcard - 4)/(popsize - 4) * (popsize - numofcard - 5)/(popsize - 5))
+    probofanotb = probofcarda * probnotcardb
+    probofbnota = probofcardb * probnotcarda
+    return (probofanotb,probofbnota)
+def oddsofseeingatleastoneofbothgoingsecond(popsize,numofcard,numofcard2):
+    probtuple = oddsoneandnottheothergoingsecond(popsize,numofcard,numofcard2)
+    probofanotb = probtuple[0]
+    probofbnota = probtuple[1]
+    oddsofneither = oddsofseeingneithergoingsecond(popsize,numofcard,numofcard2)
+    oddsofbothgoingsecond = 1 - (probofanotb + probofbnota + oddsofneither)
+    return oddsofbothgoingsecond
+def probofone():
+    while True:
+        possiblecardnums = []
+        for i in range(40,61):
+            possiblecardnums.append(i)
+        popsize = input('How many cards are in your deck?\n')
+        if checkifnumber(popsize):
+            print('Invalid. Try again.')
+            continue
+        elif int(popsize) > 60:
+            print('Please put a number that is 60 or less.')
+            continue
+        elif int(popsize) < 40:
+            print('Please put a number that is 40 or greater.')
+            continue
+        elif possiblecardnums.count(int(popsize)) == 0:
+            print('Invalid. Try again.')
+            continue
+        else:
+            print('')
+            break
+    while True:
+        possiblenums = []
+        for i in range(0,int(popsize)):
+            possiblenums.append(i)
+        numofcard = input('How many of the card are you playing?\n')
+        if checkifnumber(numofcard):
+            print('Invalid. Try again.')
+        elif int(numofcard) > int(popsize):
+            print('Please put a number less than the amonut of cards in the deck.')
+            continue
+        elif int(numofcard) <= 0:
+            print('Please put a number greater than zero.')
+            continue
+        elif possiblenums.count(int(numofcard)) == 0:
+            print('Invalid. Try again.')
+            continue
+        else:
+            print('')
+            break
+    popsize = int(popsize)
+    numofcard = int(numofcard)
+    oddsoutofonegoingfirst = oddsatleastonegoingfirst(popsize,numofcard)
+    oddsgoingsecond = oddsofgoingsecond(popsize,numofcard)
+    oddsonegoingfirst = oddsexactlyonegoingfirst(popsize,numofcard)
+    oddsonegoingsecond = oddsexactlyonegoingsecond(popsize,numofcard)
+    odds = turntopercent(oddsoutofonegoingfirst)
+    odds1 = turntopercent(oddsgoingsecond)
+    odds2 = turntopercent(oddsonegoingfirst)
+    odds3 = turntopercent(oddsonegoingsecond)
+    fractuple = turntofraction(1000 * oddsoutofonegoingfirst)
+    fractuple2 = turntofraction(1000 * oddsgoingsecond)
+    fractuple3 = turntofraction(1000 * oddsonegoingfirst)
+    fractuple4 = turntofraction(1000 * oddsonegoingsecond)
+    print('Your odds of seeing this card (at least one) in your opening hand\nGOING FIRST (5 cards) are\nroughly ' + str(odds) + '%.')
+    print('')
+    print('That is roughly ' + str(fractuple[0]) + ' out of every ' + str(fractuple[1]) + ' hands.')
+    print('')
+    print('Your odds of seeing this card (at least one) in your opening hand\nGOING SECOND (6 cards) are\nroughly ' + str(odds1) + '%.')
+    print('')
+    print('That is roughly ' + str(fractuple2[0]) + ' out of every ' + str(fractuple2[1]) + ' hands.')
+    print('')
+    print('Your odds of seeing exactly one of this card in your opening hand\nGOING FIRST (5 cards) are\nroughly ' + str(odds2) + '%.')
+    print('')
+    print('That is roughly ' + str(fractuple3[0]) + ' out of every ' + str(fractuple3[1]) + ' hands.')
+    print('')
+    print('Your odds of seeing exactly one of this card in your hand \nGOING SECOND (6 cards) are\nroughly ' + str(odds3) + '%.')
+    print('')
+    print('That is roughly ' + str(fractuple4[0]) + ' out of every ' + str(fractuple4[1]) + ' hands.')
+    print('')
+def proboftwo():
+    while True:
+        possiblecardnums = []
+        for i in range(40,61):
+            possiblecardnums.append(i)
+        popsize = input('How many cards are in your deck?\n')
+        if checkifnumber(popsize):
+            print('Invalid. Try again.')
+            continue
+        elif int(popsize) > 60:
+            print('Please put a number that is 60 or less.')
+            continue
+        elif int(popsize) < 40:
+            print('Please put a number that is 40 or greater.')
+            continue
+        elif possiblecardnums.count(int(popsize)) == 0:
+            print('Invalid. Try again.')
+            continue
+        else:
+            print('')
+            break
+    while True:
+        possiblenums = []
+        for i in range(0,int(popsize)):
+            possiblenums.append(i)
+        numofcard = input('How many of the first card are you playing?\n')
+        if checkifnumber(numofcard):
+            print('Invalid. Try again.')
+        elif int(numofcard) > int(popsize):
+            print('Please put a number less than the amonut of cards in the deck.')
+            continue
+        elif int(numofcard) <= 0:
+            print('Please put a number greater than zero.')
+            continue
+        elif possiblenums.count(int(numofcard)) == 0:
+            print('Invalid. Try again.')
+            continue
+        else:
+            print('')
+            break
+    while True:
+        possiblenums = []
+        for i in range(0,int(popsize)):
+            possiblenums.append(i)
+        numofcard2 = input('How many of the second card are you playing?\n')
+        if checkifnumber(numofcard2):
+            print('Invalid. Try again.')
+        elif int(numofcard2) > (int(popsize) - int(numofcard)):
+            print('Please put a number less than the amount of cards in the deck.')
+            continue
+        elif int(numofcard2) <= 0:
+            print('Please put a number greater than zero.')
+            continue
+        elif possiblenums.count(int(numofcard2)) == 0:
+            print('Invalid. Try again.')
+            continue
+        else:
+            print('')
+            break
+    popsize = int(popsize)
+    numofcard = int(numofcard)
+    numofcard2 = int(numofcard2)
+    probtuple = oddsoneandnottheothergoingfirst(popsize,numofcard,numofcard2)
+    oddstuple1 = turntofraction(1000 * probtuple[0])
+    oddstuple2 = turntofraction(1000 * probtuple[1])
+    oddsoftwodecimal = oddsofseeingatleastoneofbothgoingfirst(popsize,numofcard,numofcard2)
+    oddsoftwopercent = turntopercent(oddsofseeingatleastoneofbothgoingfirst(popsize,numofcard,numofcard2))
+    oddstuple3 = turntofraction(1000 * oddsoftwodecimal)
+    oddsofneitherpercent = turntopercent(oddsofseeingneither(popsize,numofcard,numofcard2))
+    oddsofneitherdecimal = oddsofseeingneither(popsize,numofcard,numofcard2)
+    oddstuple4 = turntofraction(1000 * oddsofneitherdecimal)
+    print('\033[1m' + 'GOING FIRST' + '\033[0m')
+    print('Your odds of seeing the first card and NOT the second card in your \nstarting hand (5 cards) is roughly ' + str(turntopercent(probtuple[0])) + '%.')
+    print('')
+    print('That is roughly ' + str(oddstuple1[0]) + ' out of every ' + str(oddstuple1[1]) + ' hands.')
+    print('')
+    print('Your odds of seeing the second card and NOT the first card in your \nstarting hand (5 cards) is roughly ' + str(turntopercent(probtuple[1])) + '%.')
+    print('')
+    print('That is roughly ' + str(oddstuple2[0]) + ' out of every ' + str(oddstuple2[1]) + ' hands.')
+    print('')
+    if oddsofneitherpercent == 0:
+        print('You will never not see at least one of these cards in your hand.')
+    elif oddsofneitherpercent < 2.5:
+        print('Your odds of seeing neither card in your \nstarting hand (5 cards) is roughly ' + str(oddsofneitherpercent) + '%.')
+        print('')
+        print('That is less than 1 out of every 40 hands.')
+    else:
+        print('Your odds of seeing neither card in your \nstarting hand (5 cards) is roughly ' + str(oddsofneitherpercent) + '%.')
+        print('')
+        print('That is roughly ' + str(oddstuple4[0]) + ' out of every ' + str(oddstuple4[1]) + ' hands.')
+    print('')
+    print('Your odds of seeing at least one of both of these cards in your \nstarting hand (5 cards) is roughly ' + str(oddsoftwopercent) + '%.')
+    print('')
+    print('That is roughly ' + str(oddstuple3[0]) + ' out of every ' + str(oddstuple3[1]) + ' hands.')
+    print('')
+    probtuple2 = oddsoneandnottheothergoingsecond(popsize,numofcard,numofcard2)
+    oddstuple5 = turntofraction(1000 * probtuple2[0])
+    oddstuple6 = turntofraction(1000 * probtuple2[1])
+    oddsoftwodecimalgoingsecond = oddsofseeingatleastoneofbothgoingsecond(popsize,numofcard,numofcard2)
+    oddsoftwopercentgoingsecond = turntopercent(oddsofseeingatleastoneofbothgoingsecond(popsize,numofcard,numofcard2))
+    oddstuple7 = turntofraction(1000 * oddsoftwodecimalgoingsecond)
+    oddsofneitherpercentgoingsecond = turntopercent(oddsofseeingneithergoingsecond(popsize,numofcard,numofcard2))
+    oddsofneitherdecimalgoingsecond = oddsofseeingneithergoingsecond(popsize,numofcard,numofcard2)
+    oddstuple8 = turntofraction(1000 * oddsofseeingatleastoneofbothgoingsecond(popsize,numofcard,numofcard2))
+    print('')
+    print('\033[1m' + 'GOING SECOND' + '\033[0m')
+    print('Your odds of seeing the first card and NOT the second card in your \nhand going second (6 cards) is roughly ' + str(turntopercent(probtuple2[0])) + '%.')
+    print('')
+    print('That is roughly ' + str(oddstuple5[0]) + ' out of every ' + str(oddstuple5[1]) + ' hands.')
+    print('')
+    print('Your odds of seeing the second card and NOT the first card in your \nhand going second (6 cards) is roughly ' + str(turntopercent(probtuple2[1])) + '%.')
+    print('')
+    print('That is roughly ' + str(oddstuple6[0]) + ' out of every ' + str(oddstuple6[1]) + ' hands.')
+    print('')
+    if oddsofneitherpercentgoingsecond == 0:
+        print('You will never not see at least one of these cards \nin your hand going second.')
+    elif oddsofneitherpercent < 2.5:
+        print('Your odds of seeing neither card in your \n hand going second (6 cards) is roughly ' + str(oddsofneitherpercentgoingsecond) + '%.')
+        print('')
+        print('That is less than 1 out of every 40 hands.')
+    else:
+        print('Your odds of seeing neither card in your \nhand going second (6 cards) is roughly ' + str(oddsofneitherpercentgoingsecond) + '%.')
+        print('')
+        print('That is roughly ' + str(oddstuple7[0]) + ' out of every ' + str(oddstuple7[1]) + ' hands.')
+    print('')
+    print('Your odds of seeing at least one of both of these cards in your \nhand going second (6 cards) is roughly ' + str(oddsoftwopercentgoingsecond) + '%.')
+    print('')
+    print('That is roughly ' + str(oddstuple8[0]) + ' out of every ' + str(oddstuple8[1]) + ' hands.')
+    print('')
+while True:
+    while True:
+        yesorno = input('Would you like to solve for the probability of seeing one or two cards?\n(please enter one or two) \n')
+        if str(yesorno) == 'one':
+            probofone()
+            break
+        elif str(yesorno) == 'two':
+            proboftwo()
+            break
+        else:
+            print('Please select one or two.')
+            continue
+    doitagain = input('Would you like to run the program again?\nPress enter for yes, anything else for no \n')
+    if doitagain != '':
+        print('Thank you for using the program!')
+        break
