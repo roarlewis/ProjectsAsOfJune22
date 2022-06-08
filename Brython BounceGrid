@@ -1,0 +1,199 @@
+from browser import timer
+
+gridwidth = 33
+gridheight = 37
+guttersize = 2
+
+position = (0,13)
+
+##velocity is in ms
+
+velocity = 50
+
+##direction can be 'ne', 'se', 'nw', or 'sw'
+
+direction = 'se'
+
+##trail can be 'yes' or 'no'
+
+trail = 'yes'
+
+##square_color can be Color.blue, Color.red, Color.gray, Color.green, Color.black, Color.white, or Color.yellow
+
+square_color = Color.blue
+
+def creategrid(gridwidth,gridheight):
+        widthofrectanglesback = get_width() / gridwidth
+        heightofrectanglesback = get_height() / gridheight
+        widthofrectanglesfront = widthofrectanglesback - guttersize
+        heightofrectanglesfront = heightofrectanglesback - guttersize
+        for n in range(gridheight):    
+            for i in range(gridwidth):
+                rect = Rectangle(widthofrectanglesback,heightofrectanglesback)
+                rect.set_position(i * widthofrectanglesback, n * heightofrectanglesback)
+                rect.set_color(Color.blue)
+                add(rect)
+        for n in range(gridheight):    
+            for i in range(gridwidth):
+                rect = Rectangle(widthofrectanglesfront,heightofrectanglesfront)
+                rect.set_position((i * widthofrectanglesback) + guttersize/2, (n * heightofrectanglesback) + guttersize/2)
+                rect.set_color(Color.white)
+                add(rect)
+
+creategrid(gridwidth,gridheight)
+
+def movething():
+    global gridwidth, trail, gridheight, guttersize, position, direction
+
+    def movethebox(gridwidth,gridheight,positiontuple):
+        widthofrectanglesback = get_width() / gridwidth
+        heightofrectanglesback = get_height() / gridheight
+        widthofrectanglesfront = widthofrectanglesback - guttersize
+        heightofrectanglesfront = heightofrectanglesback - guttersize
+        redbox = Rectangle(widthofrectanglesfront,heightofrectanglesfront)
+        redbox.set_color(square_color)
+        redbox.set_position((positiontuple[0] * widthofrectanglesback) + guttersize/2, (positiontuple[1] * heightofrectanglesback) + guttersize/2,)
+        add(redbox)
+        
+    def cornerhit(gridwidth,gridheight):
+        widthofrectanglesback = get_width() / gridwidth
+        heightofrectanglesback = get_height() / gridheight
+        widthofrectanglesfront = widthofrectanglesback - guttersize
+        heightofrectanglesfront = heightofrectanglesback - guttersize
+        for n in range(gridheight):    
+            for i in range(gridwidth):
+                rect = Rectangle(widthofrectanglesback,heightofrectanglesback)
+                rect.set_position(i * widthofrectanglesback, n * heightofrectanglesback)
+                rect.set_color(Color.blue)
+                add(rect)
+        for n in range(gridheight):    
+            for i in range(gridwidth):
+                rect = Rectangle(widthofrectanglesfront,heightofrectanglesfront)
+                rect.set_position((i * widthofrectanglesback) + guttersize/2, (n * heightofrectanglesback) + guttersize/2)
+                rect.set_color(Color.green)
+                add(rect)
+
+    def bounceoffbottom(direction,position):
+        if position[0] == 0:
+            cornerhit(gridwidth,gridheight)
+        elif position[0] == gridwidth - 1:
+            cornerhit(gridwidth,gridheigh)
+        else:
+            if direction == 'se':
+                direction = 'ne'
+            elif direction == 'sw':
+                direction = 'nw'
+            else:
+                direction = direction
+            return direction
+    
+    def bounceofftop(direction,position):
+        if position[0] == 0:
+            cornerhit(gridwidth,gridheight)
+        elif position[0] == gridwidth - 1:
+            cornerhit(gridwidth,gridheigh)
+        else:    
+            if direction == 'ne':
+                direction = 'se'
+            elif direction == 'nw':
+                direction = 'sw'
+            else:
+                direction = direction
+            return direction
+
+    def bounceoffleft(direction,position):
+        if position[1] == 0:
+            cornerhit(gridwidth,gridheight)
+        elif position[1] == gridheight - 1:
+            cornerhit(gridwidth,gridheight)
+        else:
+            if direction == 'nw':
+                direction = 'ne'
+            elif direction == 'sw':
+                direction = 'se'
+            else:
+                direction = direction
+            return direction
+    
+    def bounceoffright(direction,position):
+        if position[1] == 0:
+            cornerhit(gridwidth,gridheight)
+        elif position[1] == gridheight - 1:
+            cornerhit(gridwidth,gridheight)
+        else:
+            if direction == 'ne':
+                direction = 'nw'
+            elif direction == 'se':
+                direction = 'sw'
+            else:
+                direction = direction
+            return direction
+    
+    def changedirection(positiontuple,direction):
+        if positiontuple[0] == 0:
+            newdirection = bounceoffleft(direction,position)
+        elif positiontuple[0] == gridwidth - 1:
+            newdirection = bounceoffright(direction,position)
+        elif positiontuple[1] == gridheight - 1:
+            newdirection = bounceoffbottom(direction,position)
+        elif positiontuple[1] == 0:
+            newdirection = bounceofftop(direction,position)
+        else:
+            newdirection = direction
+        return newdirection
+    
+    direction = changedirection(position,direction)
+    movethebox(gridwidth,gridheight,position)
+    if direction == 'nw':
+        position = (position[0] - 1, position[1] - 1)
+        direction = changedirection(position,direction)
+    elif direction == 'sw':
+        position = (position[0] - 1, position[1] + 1)
+        direction = changedirection(position,direction)
+    elif direction == 'se':
+        position = (position[0] + 1, position[1] + 1)
+        direction = changedirection(position,direction)
+    elif direction == 'ne':
+        position = (position[0] + 1, position[1] - 1)
+        direction = changedirection(position,direction)
+    else:
+        direction = direction
+    if trail == 'no':
+        widthofrectanglesback = get_width() / gridwidth
+        heightofrectanglesback = get_height() / gridheight
+        widthofrectanglesfront = widthofrectanglesback - guttersize
+        heightofrectanglesfront = heightofrectanglesback - guttersize
+        whitebox = Rectangle(widthofrectanglesfront,heightofrectanglesfront)
+        whitebox.set_color(Color.white)
+        whitebox.set_position(((position[0]+2) * widthofrectanglesback) + guttersize/2, ((2 + position[1]) * heightofrectanglesback) + guttersize/2,)
+        add(whitebox)
+        whitebox1 = Rectangle(widthofrectanglesfront,heightofrectanglesfront)
+        whitebox1.set_color(Color.white)
+        whitebox1.set_position(((position[0]-2) * widthofrectanglesback) + guttersize/2, ((position[1]-2) * heightofrectanglesback) + guttersize/2,)
+        add(whitebox1)
+        whitebox2 = Rectangle(widthofrectanglesfront,heightofrectanglesfront)
+        whitebox2.set_color(Color.white)
+        whitebox2.set_position(((position[0]+2) * widthofrectanglesback) + guttersize/2, ((position[1]-2) * heightofrectanglesback) + guttersize/2,)
+        add(whitebox2)
+        whitebox3 = Rectangle(widthofrectanglesfront,heightofrectanglesfront)
+        whitebox3.set_color(Color.white)
+        whitebox3.set_position(((position[0]-2) * widthofrectanglesback) + guttersize/2, ((position[1]+2) * heightofrectanglesback) + guttersize/2,)
+        add(whitebox3)
+        whitebox4 = Rectangle(widthofrectanglesfront,heightofrectanglesfront)
+        whitebox4.set_color(Color.white)
+        whitebox4.set_position(((position[0]) * widthofrectanglesback) + guttersize/2, ((2 + position[1]) * heightofrectanglesback) + guttersize/2,)
+        add(whitebox4)
+        whitebox5 = Rectangle(widthofrectanglesfront,heightofrectanglesfront)
+        whitebox5.set_color(Color.white)
+        whitebox5.set_position(((position[0]+2) * widthofrectanglesback) + guttersize/2, ((position[1]) * heightofrectanglesback) + guttersize/2,)
+        add(whitebox5)
+        whitebox6 = Rectangle(widthofrectanglesfront,heightofrectanglesfront)
+        whitebox6.set_color(Color.white)
+        whitebox6.set_position(((position[0]-2) * widthofrectanglesback) + guttersize/2, ((position[1]) * heightofrectanglesback) + guttersize/2,)
+        add(whitebox6)
+        whitebox7 = Rectangle(widthofrectanglesfront,heightofrectanglesfront)
+        whitebox7.set_color(Color.white)
+        whitebox7.set_position(((position[0]) * widthofrectanglesback) + guttersize/2, ((position[1]-2) * heightofrectanglesback) + guttersize/2,)
+        add(whitebox7)
+        
+timer.set_interval(movething, velocity)
